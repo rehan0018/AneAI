@@ -8,6 +8,7 @@ export default function Sidebar() {
   const navItems = [
     { path: '/', label: 'Overview Dashboard', icon: '📊' },
     { path: '/new-patient', label: 'Patient Evaluation', icon: '🩺' },
+    { path: '/records', label: 'Patient Records', icon: '📋' },
   ];
 
   return (
@@ -55,15 +56,15 @@ export default function Sidebar() {
         </nav>
         
         <div className="p-6 border-t border-slate-200 dark:border-slate-800">
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold border-2 border-white dark:border-slate-800 shadow-sm shrink-0">
-              Dr
+          <Link to="/profile" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 -mx-2 rounded-xl transition-colors cursor-pointer">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary-500 to-indigo-500 flex items-center justify-center text-white font-bold border-2 border-white dark:border-slate-800 shadow-sm shrink-0">
+              RS
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">Dr. R. Shaikh</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">Chief Anesthesiologist</p>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </>

@@ -1,5 +1,17 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load secret environment variables
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    llm_model = genai.GenerativeModel('gemini-1.5-flash')
+else:
+    llm_model = None
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -74,15 +86,21 @@ class ChatMessage(BaseModel):
 
 @app.post("/api/chat")
 def chat_with_bot(chat: ChatMessage):
-    """Clinical Intelligence Chatbot."""
-    msg = chat.message.lower()
-    if "risk" in msg:
-        return {"reply": "Anesthesia risk is evaluated utilizing robust vectors like Age, BMI, ASA Status, and comorbidities like Hypertension or Diabetes. Please navigate to the Patient Evaluation form to compute an exact score."}
-    if "complication" in msg or "hypotension" in msg or "arrhythmia" in msg:
-        return {"reply": "Adverse complications such as Hypotension, Arrhythmia, or Postoperative Delirium are flagged exclusively when patient-specific boundaries (e.g., Surgery Type, Vitals ranges) cross critical safety thresholds."}
-    if "asa" in msg:
-        return {"reply": "ASA Status (I-VI) is the American Society of Anesthesiologists physical status scale. It intrinsically correlates with postoperative mortality mapping."}
-    return {"reply": "I am the aneAI Clinical Intelligence Engine. How can I assist you with surgical modeling or patient navigation today?"}
+    """Advanced Clinical Intelligence Chatbot."""
+    if not llm_model:
+        return {"reply": "System Alert: The Large Language Model (LLM) is currently disconnected. Please provision a valid GEMINI_API_KEY inside the backend /.env file to enable 100% authentic, dynamic clinical reasoning."}
+    
+    try:
+        system_prompt = (
+            "You are aneAI, a highly authentic, accurate, and elite clinical anesthesia assistant. "
+            "You provide mathematically sound, 100% accurate medical reasoning regarding anesthesia risks, propofol dosages, "
+            "and surgical comorbidities. Base your logic strictly on canonical anesthesiology guidelines (ASA). Keep your answers concise, professional, and doctor-focused."
+        )
+        
+        response = llm_model.generate_content(f"{system_prompt}\\n\\nDoctor Query: {chat.message}")
+        return {"reply": response.text}
+    except Exception as e:
+        return {"reply": f"Clinical Engine Error communicating with LLM: {str(e)}"}
 
 @app.post("/api/train")
 def retrain_model(current_user: User = Depends(require_admin)):
