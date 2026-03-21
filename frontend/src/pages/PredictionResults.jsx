@@ -23,15 +23,20 @@ export default function PredictionResults() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in print-container">
+      <div className="flex flex-col sm:flex-row justify-between md:items-center gap-4 print:hidden">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">AI Evaluation Results</h2>
           <p className="text-slate-500 mt-2">Intelligent synthesis of operative risk indices.</p>
         </div>
-        <Link to="/new-patient" className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white px-5 py-2.5 rounded-xl font-medium transition-colors whitespace-nowrap text-center">
-          &larr; Start New Evaluation
-        </Link>
+        <div className="flex space-x-3">
+          <button onClick={() => window.print()} className="bg-gradient-to-r from-primary-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-md hover:scale-105 active:scale-95 whitespace-nowrap text-center flex items-center justify-center">
+            <span className="mr-2">📄</span> Export PDF
+          </button>
+          <Link to="/new-patient" className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white px-5 py-2.5 rounded-xl font-medium transition-colors whitespace-nowrap text-center flex items-center justify-center border border-slate-300 dark:border-slate-700">
+            &larr; New Case
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -89,6 +94,45 @@ export default function PredictionResults() {
             <span className="mr-3 text-2xl">✅</span> No major complications predicted based on current metrics.
           </div>
         )}
+      </div>
+
+      {/* AI Recommendation Engine */}
+      <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl shadow-sm">
+        <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center">
+          <span className="mr-2">💡</span> AI Medical Recommendations
+        </h3>
+        <ul className="space-y-4 text-slate-700 dark:text-slate-300 font-medium mt-6">
+          {risk_level === 'High' && (
+            <li className="flex items-start bg-danger-50 dark:bg-danger-900/10 p-4 rounded-xl border border-danger-100 dark:border-danger-900/30">
+              <span className="text-danger-500 mr-3 text-xl">⚠️</span> 
+              <span><strong className="text-danger-700 dark:text-danger-400 text-lg block mb-1">Critical Risk:</strong> Secure immediate ICU postoperative bed mapping prior to induction. Monitor hemodynamics continuously.</span>
+            </li>
+          )}
+          {data.input.spo2 < 93 && (
+            <li className="flex items-start bg-warning-50 dark:bg-warning-900/10 p-4 rounded-xl border border-warning-100 dark:border-warning-900/30">
+              <span className="text-warning-500 mr-3 text-xl">⚡</span> 
+              <span><strong className="text-warning-700 dark:text-warning-400 text-lg block mb-1">Pulmonary Alert:</strong> Pre-oxygenation stabilization strictly required due to depressed baseline SpO2 ({data.input.spo2}%). Keep ventilator on standby.</span>
+            </li>
+          )}
+          {data.input.age > 65 && (
+            <li className="flex items-start bg-primary-50 dark:bg-primary-900/10 p-4 rounded-xl border border-primary-100 dark:border-primary-900/30">
+              <span className="text-primary-500 mr-3 text-xl">ℹ️</span> 
+              <span><strong className="text-primary-700 dark:text-primary-400 text-lg block mb-1">Geriatric Precaution:</strong> Utilize fractional induction dosing protocols to prevent profound hemodynamic collapse in elderly profile.</span>
+            </li>
+          )}
+          {complications.includes('Hypotension') && (
+            <li className="flex items-start bg-danger-50 dark:bg-danger-900/10 p-4 rounded-xl border border-danger-100 dark:border-danger-900/30">
+              <span className="text-danger-500 mr-3 text-xl">⚠️</span> 
+              <span><strong className="text-danger-700 dark:text-danger-400 text-lg block mb-1">Hemodynamic Alert:</strong> Prime Vasopressors (Ephedrine/Phenylephrine) on manifold due to high predictive hypotensive probability intraoperatively.</span>
+            </li>
+          )}
+          {risk_level === 'Low' && data.input.spo2 >= 95 && (
+            <li className="flex items-start bg-success-50 dark:bg-success-900/10 p-4 rounded-xl border border-success-100 dark:border-success-900/30">
+              <span className="text-success-500 mr-3 text-xl">✓</span> 
+              <span><strong className="text-success-700 dark:text-success-400 text-lg block mb-1">Standard Protocol:</strong> Proceed with standard induction guidelines. Patient biometrics firmly within clinical safety boundaries.</span>
+            </li>
+          )}
+        </ul>
       </div>
       
       <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-50 to-primary-50/50 dark:from-slate-800 dark:to-primary-900/10 border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-4">

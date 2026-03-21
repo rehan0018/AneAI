@@ -8,6 +8,7 @@ export default function Sidebar() {
   const navItems = [
     { path: '/', label: 'Overview Dashboard', icon: '📊' },
     { path: '/new-patient', label: 'Patient Evaluation', icon: '🩺' },
+    { path: '/vision', label: 'Radiology AI', icon: '🩻' },
     { path: '/records', label: 'Patient Records', icon: '📋' },
   ];
 

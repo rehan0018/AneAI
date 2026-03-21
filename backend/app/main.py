@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from pydantic import BaseModel
 import os
 import google.generativeai as genai
@@ -83,6 +83,29 @@ def get_patients(db: Session = Depends(get_db)):
 
 class ChatMessage(BaseModel):
     message: str
+
+import PIL.Image
+import io
+
+@app.post("/api/analyze-image")
+async def analyze_medical_image(file: UploadFile = File(...)):
+    """Computer Vision endpoint for X-Ray/CT analysis."""
+    if not llm_model:
+        return {"error": "System Alert: The Large Language Model (LLM) is disconnected. Please add GEMINI_API_KEY to the .env file."}
+    
+    try:
+        contents = await file.read()
+        image = PIL.Image.open(io.BytesIO(contents))
+        prompt = (
+            "You are an expert clinical anesthesiologist and radiologist. "
+            "Analyze this medical scan. Provide a structured summary of findings, "
+            "identifying any specific airway, pulmonary, or cardiovascular risks that could complicate anesthesia induction or surgery. "
+            "Structure your response with clear headings and use bullet points."
+        )
+        response = llm_model.generate_content([prompt, image])
+        return {"analysis": response.text}
+    except Exception as e:
+        return {"error": f"Image Processing Error: {str(e)}"}
 
 @app.post("/api/chat")
 def chat_with_bot(chat: ChatMessage):

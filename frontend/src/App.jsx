@@ -5,6 +5,7 @@ import PatientEntryForm from './pages/PatientEntryForm';
 import PredictionResults from './pages/PredictionResults';
 import DoctorProfile from './pages/DoctorProfile';
 import TrackRecords from './pages/TrackRecords';
+import MedicalVision from './pages/MedicalVision';
 import ChatWidget from './components/ChatWidget';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
               <Route path="/results" element={<PredictionResults />} />
               <Route path="/profile" element={<DoctorProfile />} />
               <Route path="/records" element={<TrackRecords />} />
+              <Route path="/vision" element={<MedicalVision />} />
             </Routes>
           </div>
         </main>
