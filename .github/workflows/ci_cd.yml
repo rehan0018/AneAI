@@ -45,7 +45,7 @@ jobs:
       - name: Install & Build
         run: |
           cd frontend
-          npm ci
+          npm install
           npm run build
           
   docker-validation:
